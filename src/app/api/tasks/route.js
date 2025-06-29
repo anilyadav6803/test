@@ -90,3 +90,19 @@ export async function DELETE(request) {
         }, { status: 500 });
     }
 }
+
+export async function PUT(request) {
+    try {
+        // Clear all tasks
+        tasks.length = 0;
+        
+        return Response.json({ 
+            message: 'All tasks cleared successfully',
+            tasks: tasks 
+        }, { status: 200 });
+    } catch (error) {
+        return Response.json({ 
+            message: 'Error clearing tasks' 
+        }, { status: 500 });
+    }
+}
