@@ -13,6 +13,7 @@ export default function TaskTester() {
     try {
       const response = await fetch('/api/tasks');
       const data = await response.json();
+      console.log('Fetched tasks from API:', data.tasks);
       setTasks(data.tasks || []);
       setMessage(data.message);
     } catch (error) {
@@ -37,8 +38,14 @@ export default function TaskTester() {
       const data = await response.json();
       setMessage(data.message);
         if (response.ok) {
+        console.log('New task created:', data.task);
+        console.log('Tasks before adding:', tasks);
         setNewTaskTitle('');
-        setTasks(prev => [...prev, data.task]); // Add the new task to existing array
+        setTasks(prev => {
+          const newTasks = [...prev, data.task];
+          console.log('Tasks after adding:', newTasks);
+          return newTasks;
+        });
       }
     } catch (error) {
       setMessage('Error creating task');
@@ -87,6 +94,27 @@ export default function TaskTester() {
       }
     } catch (error) {
       setMessage('Error deleting task');
+    }
+  };
+
+  // Clear all tasks
+  const clearAllTasks = async () => {
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      const data = await response.json();
+      setMessage(data.message);
+      
+      if (response.ok) {
+        setTasks([]);
+      }
+    } catch (error) {
+      setMessage('Error clearing tasks');
     }
   };
 
@@ -188,6 +216,16 @@ export default function TaskTester() {
               className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
             >
               Refresh Tasks
+            </button>
+          </div>
+
+          {/* Clear All Tasks Button */}
+          <div className="mt-4">
+            <button
+              onClick={clearAllTasks}
+              className="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            >
+              Clear All Tasks
             </button>
           </div>
         </div>
